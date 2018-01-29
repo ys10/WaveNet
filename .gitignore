@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Pycharm
+/.idea/
+
 # Distribution / packaging
 .Python
 env/
@@ -99,3 +102,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+test/*.wav
+data/*
