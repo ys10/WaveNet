@@ -2,7 +2,7 @@ import argparse
 import tensorflow as tf
 import os
 import tqdm
-from configs import ConfigV1
+from model import Model
 from data import get_dataset
 
 
@@ -13,7 +13,7 @@ def get_args():
     parser.add_argument("--log_path", type=str, default="./log")
     parser.add_argument("--steps", type=int, default=200000)
     parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--crop_length", type=int, default=2000)
+    parser.add_argument("--crop_length", type=int, default=2048)
     parser.add_argument("--sample_rate", type=int, default=20000)
     parser.add_argument("--add_audio_summary_per_steps", type=int, default=1000)
     parser.add_argument("--save_per_steps", type=int, default=5000)
@@ -22,7 +22,7 @@ def get_args():
 
 def main():
     args = get_args()
-    net = ConfigV1()
+    net = Model()
     graph = tf.Graph()
     with graph.as_default():
         with tf.variable_scope("data"):
@@ -31,7 +31,7 @@ def main():
             iterator = dataset.make_one_shot_iterator()
             inputs = iterator.get_next()
         # build net.
-        net_tensor_dic = net.build(inputs=inputs)
+        net_tensor_dic = net.build(data=inputs)
 
         # get summaries.
         audio_summary = tf.summary.merge([tf.summary.audio("wave", net_tensor_dic["wave"], args.sample_rate),
