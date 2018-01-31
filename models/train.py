@@ -3,7 +3,7 @@ import tensorflow as tf
 import os
 import tqdm
 from model import Model
-from data import get_dataset
+from data import get_train_dataset
 
 
 def get_args():
@@ -26,12 +26,12 @@ def main():
     graph = tf.Graph()
     with graph.as_default():
         with tf.variable_scope("data"):
-            dataset = get_dataset(args.data_path, args.batch_size, args.crop_length)
+            dataset = get_train_dataset(args.data_path, args.batch_size, args.crop_length)
             dataset = dataset.repeat()
             iterator = dataset.make_one_shot_iterator()
-            inputs = iterator.get_next()
+            data = iterator.get_next()
         # build net.
-        net_tensor_dic = net.build(data=inputs)
+        net_tensor_dic = net.build(data=data)
 
         # get summaries.
         audio_summary = tf.summary.merge([tf.summary.audio("wave", net_tensor_dic["wave"], args.sample_rate),
