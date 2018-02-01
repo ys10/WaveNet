@@ -189,6 +189,8 @@ class FastGenModel(object):
             conditions = tf.cast(mu_wav + self.central_class, dtype=tf.int32)
             # TODO construct inputs by the shape of conditions.
             inputs = tf.to_int64(data["inputs"])
+            assert inputs.get_shape().with_rank(2)
+            assert inputs.get_shape()[1].value == 1
 
             init_op_lst = []
             # 1st. build the initial causal layer.

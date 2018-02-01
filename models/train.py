@@ -53,6 +53,7 @@ def main():
     with tf.Session(graph=graph, config=config) as sess:
         # get checkpoint
         ckpt = tf.train.get_checkpoint_state(args.save_path)
+        assert ckpt
         if ckpt:
             saver.restore(sess=sess, save_path=ckpt.model_checkpoint_path)
         else:

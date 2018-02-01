@@ -18,6 +18,7 @@ def parse_gen_example(record):
                                            "wave": tf.FixedLenFeature([], tf.string),
                                        })
     wave = tf.to_float(tf.decode_raw(features["wave"], tf.int64))
+    # wave = tf.expand_dims(wave, -1)
     return {"wave": wave}
 
 
@@ -31,27 +32,18 @@ def crop_train_data(crop_length):
     return __crop
 
 
-def crop_gen_data(crop_length):
-    def __crop(inputs):
-        wave = tf.random_crop(inputs["wave"], size=[crop_length])
-        wave.set_shape([crop_length])
-        return {"wave": wave}
-    return __crop
-
-
 def get_train_dataset(tfrecord_path, batch_size=16, crop_length=16000):
     dataset = tf.data.TFRecordDataset(tfrecord_path)
-    dataset = dataset.map(parse_train_example)
+    dataset = dataset.map(parse_gen_example)
     dataset = dataset.map(crop_train_data(crop_length))
     dataset = dataset.shuffle(10000)
     dataset = dataset.batch(batch_size)
     return dataset
 
 
-def get_gen_dataset(tfrecord_path, batch_size=16, crop_length=16000):
+def get_gen_dataset(tfrecord_path, batch_size=1):
     dataset = tf.data.TFRecordDataset(tfrecord_path)
-    dataset = dataset.map(parse_gen_example)
-    dataset = dataset.map(crop_gen_data(crop_length))
+    dataset = dataset.map(parse_train_example)
     dataset = dataset.shuffle(10000)
     dataset = dataset.batch(batch_size)
     return dataset
