@@ -26,7 +26,7 @@ def dilated_causal_conv1d_no_pad(inputs, width, dilation_rate, filters, name="di
 def fast_gen_dilated_causal_conv1d(inputs, width, dilation_rate, filters, name="dilated_causal_conv1d", reuse=None):
     with tf.variable_scope(name, reuse=reuse):
         assert inputs.get_shape().with_rank(3)
-        # assert inputs.get_shape()[1].value == 1
+        assert inputs.get_shape()[1].value == 1
         assert width >= 2
 
         batch_size = tf.shape(inputs)[0]

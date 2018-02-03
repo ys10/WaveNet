@@ -106,3 +106,5 @@ ENV/
 test/*.wav
 data/*
 save/*
+log/*
+test.py
