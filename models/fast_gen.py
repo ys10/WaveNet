@@ -46,6 +46,7 @@ def main():
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
+    tf.logging.set_verbosity(tf.logging.INFO)
     with tf.Session(graph=graph, config=config) as sess:
         # Start input enqueue threads.
         coord = tf.train.Coordinator()
@@ -62,15 +63,12 @@ def main():
         #                         feed_dict={gci_labels_placeholder: labels_batch,
         #                                    wave_placeholder: wave_batch})
         sess.run(net_tensor_dic["init_op"], feed_dict={gci_labels_placeholder: labels_batch,  wave_placeholder: wave_batch})
-        print(labels_batch)
         # labels_batch = sess.run(net_tensor_dic["init_op"], feed_dict={gci_labels_placeholder: labels_batch})
         print("init done!")
 
         # # get checkpoint
-        # ckpt = tf.train.get_checkpoint_state(args.save_path)
-        # assert ckpt
-        # saver.restore(sess=sess, save_path=ckpt.model_checkpoint_path)
-        load_model(saver, sess, "save/")
+        save_path = os.path.join(args.save_path, net.name)
+        load_model(saver, sess, save_path)
 
         global_step_eval = sess.run(global_step)
         # labels_batch = np.zeros(shape=(args.batch_size, 1), dtype=np.float32)
