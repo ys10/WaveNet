@@ -58,9 +58,10 @@ def main():
         labels_batch = np.zeros(shape=(args.batch_size, 1), dtype=np.float32)
         wave_batch = np.ones(shape=(args.batch_size, 1), dtype=np.float32)
         print("init start!")
-        labels_batch = sess.run(net_tensor_dic["init_op"],
-                                feed_dict={gci_labels_placeholder: labels_batch,
-                                           wave_placeholder: wave_batch})
+        # labels_batch = sess.run(net_tensor_dic["init_op"],
+        #                         feed_dict={gci_labels_placeholder: labels_batch,
+        #                                    wave_placeholder: wave_batch})
+        sess.run(net_tensor_dic["init_op"], feed_dict={gci_labels_placeholder: labels_batch,  wave_placeholder: wave_batch})
         print(labels_batch)
         # labels_batch = sess.run(net_tensor_dic["init_op"], feed_dict={gci_labels_placeholder: labels_batch})
         print("init done!")
