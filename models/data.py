@@ -34,7 +34,7 @@ def crop_train_data(crop_length):
 
 def get_train_dataset(tfrecord_path, batch_size=16, crop_length=16000):
     dataset = tf.data.TFRecordDataset(tfrecord_path)
-    dataset = dataset.map(parse_gen_example)
+    dataset = dataset.map(parse_train_example)
     dataset = dataset.map(crop_train_data(crop_length))
     dataset = dataset.shuffle(10000)
     dataset = dataset.batch(batch_size)
@@ -43,7 +43,7 @@ def get_train_dataset(tfrecord_path, batch_size=16, crop_length=16000):
 
 def get_gen_dataset(tfrecord_path, batch_size=1):
     dataset = tf.data.TFRecordDataset(tfrecord_path)
-    dataset = dataset.map(parse_train_example)
+    dataset = dataset.map(parse_gen_example)
     dataset = dataset.shuffle(10000)
     dataset = dataset.batch(batch_size)
     return dataset
