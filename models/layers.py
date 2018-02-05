@@ -46,6 +46,7 @@ def fast_gen_dilated_causal_conv1d(inputs, width, dilation_rate, filters, name="
         deque_out = queue.dequeue()
         if width == 2:
             out = tf.matmul(deque_out[:, 0, :], kernel[0]) + tf.matmul(inputs[:, 0, :], kernel[1]) + bias
+            out = tf.reshape(out, shape=(batch_size, 1, filters), name=None)
             deque_out = [deque_out]
         elif width == 3:
             out = tf.matmul(deque_out[0][:, 0, :], kernel[0]) + tf.matmul(deque_out[1][:, 0, :], kernel[1]) + \
@@ -59,4 +60,4 @@ def fast_gen_dilated_causal_conv1d(inputs, width, dilation_rate, filters, name="
         with tf.control_dependencies([upd_op]):
             controlled_out = tf.identity(out)
 
-        return {"init_op": init_op, "out": tf.expand_dims(controlled_out, 0)}
+        return {"init_op": init_op, "out": controlled_out}

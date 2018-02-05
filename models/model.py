@@ -183,8 +183,8 @@ class FastGenModel(object):
     def build(self, data, reuse=None):
         with tf.variable_scope(self.name, reuse=reuse):
             wave = data["wave"]
-            # assert wave.get_shape().with_rank(2)
-            # assert wave.get_shape()[1].value == 1
+            assert wave.get_shape().with_rank(2)
+            assert wave.get_shape()[1].value == 1
             mu_wav = mu_law(wave)
             conditions = tf.cast(mu_wav + self.central_class, dtype=tf.int32)
             # TODO construct inputs by the shape of conditions.
@@ -221,7 +221,8 @@ class FastGenModel(object):
                                                                   activation=None, name="conditions_conv")
                                 init_op_lst.append(conv_out["init_op"])
                                 conv_out = conv_out["out"]
-                                acti_out = self_gated_layer(inputs=tf.add(conv_out, conditions_conv))
+                                added = tf.add(conv_out, conditions_conv)
+                                acti_out = self_gated_layer(inputs=added)
                                 resi_out += tf.layers.dense(inputs=acti_out, units=self.residual_units,
                                                             activation=None, name="residual_out")
                                 skip_out += tf.layers.dense(inputs=acti_out, units=self.residual_units,

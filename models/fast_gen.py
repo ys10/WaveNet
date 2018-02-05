@@ -33,11 +33,10 @@ def main():
             # data = iterator.get_next()
 
             wave_placeholder = tf.placeholder(shape=(args.batch_size, 1), dtype=tf.float32)
-            data = {"wave": wave_placeholder}
 
             # Load gci labels as inputs.
             gci_labels_placeholder = tf.placeholder(shape=(args.batch_size, 1), dtype=tf.float32)
-            data["inputs"] = gci_labels_placeholder
+            data = {"wave": wave_placeholder, "inputs":gci_labels_placeholder}
         # build net.
         net_tensor_dic = net.build(data=data)
         global_step = tf.Variable(0, dtype=tf.int32, name="global_step")
@@ -49,18 +48,20 @@ def main():
     config.gpu_options.allow_growth = True
     with tf.Session(graph=graph, config=config) as sess:
         # Start input enqueue threads.
-        # coord = tf.train.Coordinator()
-        # threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
         init = tf.global_variables_initializer()
         sess.run(init)
 
         # warm-up queues
-        print("init start!")
         labels_batch = np.zeros(shape=(args.batch_size, 1), dtype=np.float32)
         wave_batch = np.ones(shape=(args.batch_size, 1), dtype=np.float32)
-        labels_batch = sess.run(net_tensor_dic["init_op"], feed_dict={gci_labels_placeholder: labels_batch,
-                                               wave_placeholder: wave_batch})
+        print("init start!")
+        labels_batch = sess.run(net_tensor_dic["init_op"],
+                                feed_dict={gci_labels_placeholder: labels_batch,
+                                           wave_placeholder: wave_batch})
+        print(labels_batch)
         # labels_batch = sess.run(net_tensor_dic["init_op"], feed_dict={gci_labels_placeholder: labels_batch})
         print("init done!")
 
@@ -91,9 +92,9 @@ def main():
         # TODO write result
         pass
 
-    # coord.request_stop()
-    # # Terminate as usual.  It is innocuous to request stop twice.
-    # coord.join(threads)
+    coord.request_stop()
+    # Terminate as usual.  It is innocuous to request stop twice.
+    coord.join(threads)
     print("Congratulations!")
 
 
