@@ -53,7 +53,7 @@ def main():
         pred_wav_eval = sess.run(model.pred_wav, feed_dict={waveform_seed_placeholder: rnd_seed,
                                                             max_infer_samples_placeholder: args.max_infer_samples})
         used_time = time.time() - begin_time
-        print(f'Generate {args.gen_samples} waves, per {args.max_infer_samples} samples, use {used_time} seconds.')
+        print("Generate {} waves, per {} samples, use {} seconds.".format(args.gen_samples, args.max_infer_samples, used_time))
         for idx, single_wav in enumerate(pred_wav_eval):
             siowav.write('step_{}_pred_{}.wav'.format(global_step_eval, idx), data=single_wav, rate=hp.sample_rate)
 

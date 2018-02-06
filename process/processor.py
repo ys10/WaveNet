@@ -1,7 +1,8 @@
 # coding=utf-8
 import tensorflow as tf
 import numpy as np
-from ops import file_names, read_wave_data, read_marks_data, make_mask, mask_wave, mask_marks_1d
+
+from .ops import file_names, read_wave_data, read_marks_data, make_mask, mask_wave, mask_marks_1d
 
 marks_path = "data/marks/"
 wave_path = "data/wave/"

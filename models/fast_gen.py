@@ -4,9 +4,10 @@ import tensorflow as tf
 import os
 import tqdm
 import numpy as np
-from model import FastGenModel
-from data import get_gen_dataset
-from ops import load_model
+
+from .model import FastGenModel
+from .data import get_gen_dataset
+from .ops import load_model
 
 
 def get_args():
