@@ -1,10 +1,14 @@
+# coding=utf-8
+
 import argparse
 import tensorflow as tf
 import os
 import tqdm
-from model import Model
-from data import get_train_dataset
-from ops import load_model, save_model
+
+from model import FocalLossModel
+from data import get_training_dataset
+from model_loader import load_model, save_model
+
 
 def get_args():
     parser = argparse.ArgumentParser(description="WaveNet!")
@@ -22,11 +26,11 @@ def get_args():
 
 def main():
     args = get_args()
-    net = Model()
+    net = FocalLossModel()
     graph = tf.Graph()
     with graph.as_default():
         with tf.variable_scope("data"):
-            dataset = get_train_dataset(args.data_path, args.batch_size, args.crop_length)
+            dataset = get_training_dataset(args.data_path, args.batch_size, args.crop_length)
             dataset = dataset.repeat()
             iterator = dataset.make_one_shot_iterator()
             data = iterator.get_next()

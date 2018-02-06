@@ -1,6 +1,6 @@
 # coding=utf-8
-from builtins import object
 
+from builtins import object
 import tensorflow as tf
 
 from layers import dilated_causal_conv1d, fast_gen_dilated_causal_conv1d, self_gated_layer

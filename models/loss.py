@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import tensorflow as tf
 from tensorflow.python.ops import array_ops
 
