@@ -23,8 +23,7 @@ def read_marks_data(path, rate, wave_length):
             lines = mark_file.readlines(10000)
             if not lines:
                 break
-            for line in lines:
-                marks.append(round(float(line) * rate))
+            marks.extend(map(lambda l: round(float(l) * rate), lines))
     if marks[-1] == wave_length:
         return marks[:-2]
     return marks
@@ -112,6 +111,16 @@ def make_mask(marks, wave_length, mask_range=16):
                 break
         mask.append((begin, end))
         i = j
+    return mask
+
+
+def make_full_mask(wave_length):
+    """
+    Make a mask that can mask full wave data.
+    :param wave_length: length of raw wave.
+    :return: a list containing only one mask tuple(begin, end).
+    """
+    mask = [(0, wave_length)]
     return mask
 
 
