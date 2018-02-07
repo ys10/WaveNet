@@ -12,15 +12,15 @@ from model_loader import load_model, save_model
 
 def get_args():
     parser = argparse.ArgumentParser(description="WaveNet!")
-    parser.add_argument("--data_path", type=str, default="./data/dataset-1024.tfrecords")
+    parser.add_argument("--data_path", type=str, default="./data/training.tfrecords")
     parser.add_argument("--save_path", type=str, default="./save/")
     parser.add_argument("--log_path", type=str, default="./log")
     parser.add_argument("--steps", type=int, default=200000)
-    parser.add_argument("--batch_size", type=int, default=1)
-    parser.add_argument("--crop_length", type=int, default=2048)
+    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--crop_length", type=int, default=8000)
     parser.add_argument("--sample_rate", type=int, default=20000)
     parser.add_argument("--add_audio_summary_per_steps", type=int, default=1000)
-    parser.add_argument("--save_per_steps", type=int, default=1)
+    parser.add_argument("--save_per_steps", type=int, default=1000)
     return parser.parse_args()
 
 
@@ -56,11 +56,11 @@ def main():
     config.gpu_options.allow_growth = True
     tf.logging.set_verbosity(tf.logging.INFO)
     with tf.Session(graph=graph, config=config) as sess:
-        if not load_model(saver, sess, args.save_path):
+        save_path = os.path.join(args.save_path, net.name)
+        if not load_model(saver, sess, save_path):
             sess.run([tf.global_variables_initializer(), tf.local_variables_initializer()])
 
         summary_writer = tf.summary.FileWriter(args.log_path)
-        save_path = os.path.join(args.save_path, net.name)
 
         global_step_eval = sess.run(global_step)
         pbar = tqdm.tqdm(total=args.steps)
