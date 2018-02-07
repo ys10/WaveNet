@@ -107,4 +107,5 @@ test/*.wav
 data/*
 save/*
 log/*
+fast_gen/*
 test.py
