@@ -9,7 +9,8 @@ wave_path = "data/wave/"
 marks_extension = ".marks"
 wave_extension = ".wav"
 data_path = "data/training.tfrecords"
-mask_range = 8000
+crop_length = 8000
+mask_range = crop_length
 
 
 def training_data_feature(wave, labels):
@@ -44,6 +45,9 @@ def main():
             for i in range(len(masked_marks)):
                 wave = masked_wave[i]
                 labels = masked_marks[i]
+                if len(wave) < crop_length:
+                    print("Warning: length of wave is less than crop length, key: {}, index: {}, length: {}"
+                          .format(key, i, len(wave)))
                 example = tf.train.Example(features=tf.train.Features(feature=training_data_feature(wave, labels)))
                 writer.write(example.SerializeToString())
         print("Done!")
