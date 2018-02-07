@@ -11,10 +11,10 @@ wave_extension = ".wav"
 data_path = "data/testing.tfrecords"
 
 
-def testing_data_feature(wave, labels, key, rate):
+def testing_data_feature(wave, length, key, rate):
     feature_dict = {
         "wave": tf.train.Feature(bytes_list=tf.train.BytesList(value=[wave.tobytes()])),
-        "labels": tf.train.Feature(bytes_list=tf.train.BytesList(value=[labels.tobytes()])),
+        "length": tf.train.Feature(int64_list=tf.train.Int64List(value=[length])),
         "key": tf.train.Feature(bytes_list=tf.train.BytesList(value=[bytes(key, encoding="utf-8")])),
         "rate": tf.train.Feature(int64_list=tf.train.Int64List(value=[rate])),
     }
@@ -45,7 +45,8 @@ def main():
             # write to TFRecords file.
             wave = masked_wave[0]
             labels = masked_marks[0]
-            example = tf.train.Example(features=tf.train.Features(feature=testing_data_feature(wave, labels, key, rate)))
+            example = tf.train.Example(features=tf.train.Features(
+                feature=testing_data_feature(wave, wave_length, key, rate)))
             writer.write(example.SerializeToString())
 
 
