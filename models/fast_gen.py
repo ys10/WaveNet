@@ -124,7 +124,6 @@ def main():
     #     #              data=result, rate=args.sample_rate)
     #     # TODO write result
     #     pass
-
     coord.request_stop()
     # Terminate as usual.  It is innocuous to request stop twice.
     coord.join(threads)
