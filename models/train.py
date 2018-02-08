@@ -5,7 +5,7 @@ import tensorflow as tf
 import os
 import tqdm
 
-from model import FocalLossModel
+from model import FocalLossModel, Model
 from data import get_training_dataset
 from model_loader import load_model, save_model
 
@@ -16,17 +16,17 @@ def get_args():
     parser.add_argument("--save_path", type=str, default="./save/")
     parser.add_argument("--log_path", type=str, default="./log")
     parser.add_argument("--steps", type=int, default=250000)
-    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--crop_length", type=int, default=8000)
     parser.add_argument("--sample_rate", type=int, default=20000)
     parser.add_argument("--add_audio_summary_per_steps", type=int, default=1000)
-    parser.add_argument("--save_per_steps", type=int, default=2500)
+    parser.add_argument("--save_per_steps", type=int, default=5000)
     return parser.parse_args()
 
 
 def main():
     args = get_args()
-    net = FocalLossModel()
+    net = Model()
     graph = tf.Graph()
     with graph.as_default():
         with tf.variable_scope("data"):
