@@ -23,6 +23,7 @@ def training_data_feature(wave, labels):
 
 def main():
     with tf.python_io.TFRecordWriter(data_path) as writer:
+        min_wave_length = 100000
         print("Process training data start!")
         keys = file_names(marks_path)
         print("file number: {}".format(len(keys)))
@@ -45,12 +46,16 @@ def main():
             for i in range(len(masked_marks)):
                 wave = masked_wave[i]
                 labels = masked_marks[i]
-                if len(wave) < crop_length:
+                masked_length = len(wave)
+                if masked_length < min_wave_length:
+                    min_wave_length = masked_length
+                if masked_length < crop_length:
                     print("Warning: length of wave is less than crop length, key: {}, index: {}, length: {}"
-                          .format(key, i, len(wave)))
+                          .format(key, i, masked_length))
                     break
                 example = tf.train.Example(features=tf.train.Features(feature=training_data_feature(wave, labels)))
                 writer.write(example.SerializeToString())
+        print("Min sub sequence length: {}".format(min_wave_length))
         print("Done!")
 
 
