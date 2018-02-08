@@ -15,12 +15,12 @@ def get_args():
     parser.add_argument("--data_path", type=str, default="./data/training.tfrecords")
     parser.add_argument("--save_path", type=str, default="./save/")
     parser.add_argument("--log_path", type=str, default="./log")
-    parser.add_argument("--steps", type=int, default=200000)
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--steps", type=int, default=250000)
+    parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--crop_length", type=int, default=8000)
     parser.add_argument("--sample_rate", type=int, default=20000)
     parser.add_argument("--add_audio_summary_per_steps", type=int, default=1000)
-    parser.add_argument("--save_per_steps", type=int, default=1000)
+    parser.add_argument("--save_per_steps", type=int, default=2500)
     return parser.parse_args()
 
 
