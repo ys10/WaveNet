@@ -48,6 +48,7 @@ def main():
                 if len(wave) < crop_length:
                     print("Warning: length of wave is less than crop length, key: {}, index: {}, length: {}"
                           .format(key, i, len(wave)))
+                    break
                 example = tf.train.Example(features=tf.train.Features(feature=training_data_feature(wave, labels)))
                 writer.write(example.SerializeToString())
         print("Done!")
