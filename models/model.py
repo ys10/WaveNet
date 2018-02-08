@@ -12,7 +12,7 @@ class Model(object):
     def __init__(self, name="WaveNet"):
         self.name = name
         self.max_global_steps = 200000
-        self.blks = 3
+        self.blks = 1
         self.layers_per_blk = 10
         self.conv_width = 2
         self.dilation_base = 2
