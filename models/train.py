@@ -46,7 +46,7 @@ def main():
 
         # get optimizer.
         global_step = tf.Variable(0, dtype=tf.int32, name="global_step")
-        opt = tf.train.AdamOptimizer(1e-4)
+        opt = tf.train.AdamOptimizer(1e-3)
         upd = opt.minimize(net_tensor_dic["loss"], global_step=global_step)
 
         # get saver.
