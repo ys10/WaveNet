@@ -23,6 +23,7 @@ def testing_data_feature(wave, length, key, rate):
 
 def main():
     with tf.python_io.TFRecordWriter(data_path) as writer:
+        min_wave_length = 100000
         print("Process test data start!")
         keys = file_names(marks_path)
         print("file number: {}".format(len(keys)))
@@ -42,12 +43,16 @@ def main():
             # print data info
             print("key: {}, wave_length: {}, number of marks: {}, number of sub sequences: {}"
                   .format(key, wave_length, len(marks_data), len(masked_wave)))
+            masked_length = len(masked_wave)
+            if masked_length < min_wave_length:
+                min_wave_length = masked_length
             # write to TFRecords file.
             wave = masked_wave[0]
-            labels = masked_marks[0]
             example = tf.train.Example(features=tf.train.Features(
                 feature=testing_data_feature(wave, wave_length, key, rate)))
             writer.write(example.SerializeToString())
+        print("Min sub sequence length: {}".format(min_wave_length))
+        print("Done!")
 
 
 if __name__ == '__main__':
