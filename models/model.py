@@ -12,7 +12,7 @@ class Model(object):
     def __init__(self, name="WaveNet"):
         self.name = name
         self.max_global_steps = 200000
-        self.blks = 1
+        self.blks = 3
         self.layers_per_blk = 10
         self.conv_width = 2
         self.dilation_base = 2
@@ -75,7 +75,7 @@ class Model(object):
                 # 2nd. dense -> relu
                 skip_out = tf.layers.dense(inputs=skip_out, units=self.hidden_out, activation=tf.nn.relu)
                 # 3rd. dense -> softmax
-                logits = tf.layers.dense(inputs=skip_out, units=self.label_classes, activation=tf.nn.softmax)
+                logits = tf.layers.dense(inputs=skip_out, units=self.label_classes, activation=None)
                 # 4th. get modes
                 modes = tf.argmax(logits, axis=-1)
                 # 5th. get loss.
@@ -151,7 +151,7 @@ class FocalLossModel(object):
                 # 2nd. dense -> relu
                 skip_out = tf.layers.dense(inputs=skip_out, units=self.hidden_out, activation=tf.nn.relu)
                 # 3rd. dense -> softmax
-                logits = tf.layers.dense(inputs=skip_out, units=self.label_classes, activation=tf.nn.softmax)
+                logits = tf.layers.dense(inputs=skip_out, units=self.label_classes, activation=None)
                 # 4th. get modes
                 modes = tf.argmax(logits, axis=-1)
                 # 5th. get focal loss.

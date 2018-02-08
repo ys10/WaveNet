@@ -19,8 +19,8 @@ def focal_loss(logits, labels, alpha=0.25, gamma=2):
     Returns:
         loss: A (scalar) tensor representing the value of the loss function
     """
-    # sigmoid_p = tf.nn.sigmoid(logits)
-    sigmoid_p = logits
+    sigmoid_p = tf.nn.sigmoid(logits)
+    # sigmoid_p = logits
     zeros = array_ops.zeros_like(sigmoid_p, dtype=sigmoid_p.dtype)
     pos_p_sub = array_ops.where(labels >= sigmoid_p, labels - sigmoid_p, zeros)
     neg_p_sub = array_ops.where(labels > zeros, zeros, sigmoid_p)
