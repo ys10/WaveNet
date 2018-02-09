@@ -12,15 +12,18 @@ from model_loader import load_model, save_model
 
 def get_args():
     parser = argparse.ArgumentParser(description="WaveNet!")
-    parser.add_argument("--data_path", type=str, default="./data/training.tfrecords")
+    parser.add_argument("--training_data_path", type=str, default="./data/training.tfrecords")
+    parser.add_argument("--validation_data_path", type=str, default="./data/validation.tfrecords")
     parser.add_argument("--save_path", type=str, default="./save/")
     parser.add_argument("--log_path", type=str, default="./log")
-    parser.add_argument("--steps", type=int, default=250000)
+    parser.add_argument("--training_steps", type=int, default=250000)
+    parser.add_argument("--validation_steps", type=int, default=250)
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--crop_length", type=int, default=8000)
     parser.add_argument("--sample_rate", type=int, default=20000)
     parser.add_argument("--add_audio_summary_per_steps", type=int, default=1000)
     parser.add_argument("--save_per_steps", type=int, default=5000)
+    parser.add_argument("--validation_per_steps", type=int, default=500)
     return parser.parse_args()
 
 
@@ -29,25 +32,33 @@ def main():
     net = Model()
     graph = tf.Graph()
     with graph.as_default():
-        with tf.variable_scope("data"):
-            dataset = get_training_dataset(args.data_path, args.batch_size, args.crop_length)
-            dataset = dataset.repeat()
-            iterator = dataset.make_one_shot_iterator()
-            data = iterator.get_next()
+        with tf.variable_scope("training_data"):
+            training_set = get_training_dataset(args.training_data_path, args.batch_size, args.crop_length)
+            training_set = training_set.repeat()
+            training_iterator = training_set.make_one_shot_iterator()
+            training_data = training_iterator.get_next()
+
+        with tf.variable_scope("validation_data"):
+            validation_set = get_training_dataset(args.validation_data_path, args.batch_size, args.crop_length)
+            validation_set = validation_set.repeat()
+            validation_iterator = validation_set.make_one_shot_iterator()
+            validation_data = validation_iterator.get_next()
         # build net.
-        net_tensor_dic = net.build(data=data)
+        training_tensor_dic = net.build(data=training_data, reuse=tf.AUTO_REUSE)
+        validation_tensor_dic = net.build(data=validation_data, reuse=tf.AUTO_REUSE)
 
         # get summaries.
-        audio_summary = tf.summary.merge([tf.summary.audio("wave", net_tensor_dic["wave"], args.sample_rate),
-                                          tf.summary.audio("output", net_tensor_dic["output"], args.sample_rate),
-                                          tf.summary.audio("labels", net_tensor_dic["labels"], args.sample_rate)
+        audio_summary = tf.summary.merge([tf.summary.audio("wave", training_tensor_dic["wave"], args.sample_rate),
+                                          tf.summary.audio("output", training_tensor_dic["output"], args.sample_rate),
+                                          tf.summary.audio("labels", training_tensor_dic["labels"], args.sample_rate)
                                           ])
-        loss_summary = tf.summary.scalar("loss", net_tensor_dic["loss"])
+        training_loss_summary = tf.summary.scalar("training_loss", training_tensor_dic["loss"])
+        validation_loss_summary = tf.summary.scalar("validation_loss", validation_tensor_dic["loss"])
 
         # get optimizer.
         global_step = tf.Variable(0, dtype=tf.int32, name="global_step")
         opt = tf.train.AdamOptimizer(1e-3)
-        upd = opt.minimize(net_tensor_dic["loss"], global_step=global_step)
+        upd = opt.minimize(training_tensor_dic["loss"], global_step=global_step)
 
         # get saver.
         saver = tf.train.Saver()
@@ -65,12 +76,22 @@ def main():
         global_step_eval = sess.run(global_step)
         pbar = tqdm.tqdm(total=args.steps)
         pbar.update(global_step_eval)
-        while global_step_eval < args.steps:
-            loss_summary_eval, audio_summary_eval, global_step_eval, _ = sess.run([loss_summary,
-                                                                                   audio_summary, global_step, upd])
-            summary_writer.add_summary(loss_summary_eval, global_step=global_step_eval)
+        while global_step_eval < args.training_steps:
+            training_loss_summary_eval, audio_summary_eval, global_step_eval, _ = \
+                sess.run([training_loss_summary, audio_summary, global_step, upd])
+            summary_writer.add_summary(training_loss_summary_eval, global_step=global_step_eval)
+            """summary audio"""
             if global_step_eval % args.add_audio_summary_per_steps == 0:
                 summary_writer.add_summary(audio_summary_eval, global_step=global_step_eval)
+            """validate"""
+            if global_step_eval % args.validation_per_steps == 0:
+                validation_loss_summary_eval = 0
+                for local_step_eval in range(args.validation_steps):
+                    validation_loss_summary_eval += sess.run([validation_loss_summary])
+                validation_loss_summary_eval /= args.validation_steps
+                # TODO calculate loss on whole validation set.
+                summary_writer.add_summary(validation_loss_summary_eval, global_step=global_step_eval)
+            """save model"""
             if global_step_eval % args.save_per_steps == 0:
                 if not os.path.exists(args.save_path) or not os.path.isdir(args.save_path):
                     os.makedirs(args.save_path)
