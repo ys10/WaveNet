@@ -74,7 +74,7 @@ def main():
         summary_writer = tf.summary.FileWriter(args.log_path)
 
         global_step_eval = sess.run(global_step)
-        pbar = tqdm.tqdm(total=args.steps)
+        pbar = tqdm.tqdm(total=args.training_steps)
         pbar.update(global_step_eval)
         while global_step_eval < args.training_steps:
             training_loss_summary_eval, audio_summary_eval, global_step_eval, _ = \
