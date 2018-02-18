@@ -86,10 +86,6 @@ def main():
             #     summary_writer.add_summary(audio_summary_eval, global_step=global_step_eval)
             """validate"""
             if global_step_eval % args.validation_per_steps == 0:
-                # validation_loss_summary_eval = 0
-                # for local_step_eval in range(args.validation_steps):
-                # validation_loss_summary_eval += sess.run(validation_loss_summary)
-                # validation_loss_summary_eval /= args.validation_steps
                 validation_loss_summary_eval = sess.run(validation_loss_summary)
                 tf.logging.info("Validation done.")
                 validation_writer.add_summary(validation_loss_summary_eval, global_step=global_step_eval)
