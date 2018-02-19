@@ -20,8 +20,8 @@ def get_args():
     parser.add_argument("--log_path", type=str, default="./log")
     parser.add_argument("--training_steps", type=int, default=250000)
     parser.add_argument("--validation_size", type=int, default=152)
-    parser.add_argument("--batch_size", type=int, default=1)
-    parser.add_argument("--crop_length", type=int, default=8000)
+    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--crop_length", type=int, default=2000)
     parser.add_argument("--sample_rate", type=int, default=20000)
     parser.add_argument("--add_audio_summary_per_steps", type=int, default=1000)
     parser.add_argument("--save_per_steps", type=int, default=5000)
@@ -31,7 +31,7 @@ def get_args():
 
 def main():
     args = get_args()
-    net = DisModel()
+    net = Model()
     graph = tf.Graph()
     with graph.as_default():
         with tf.variable_scope("training_data"):
@@ -55,7 +55,7 @@ def main():
                                           tf.summary.audio("labels", training_tensor_dic["labels"], args.sample_rate)
                                           ])
         training_loss_summary = tf.summary.scalar("training_loss", training_tensor_dic["loss"])
-        validation_loss_summary = tf.summary.scalar("validation_loss", validation_tensor_dic["loss"])
+        # validation_loss_summary = tf.summary.scalar("validation_loss", validation_tensor_dic["loss"])
 
         # get optimizer.
         global_step = tf.Variable(0, dtype=tf.int32, name="global_step")
@@ -87,10 +87,10 @@ def main():
             # if global_step_eval % args.add_audio_summary_per_steps == 0:
             #     summary_writer.add_summary(audio_summary_eval, global_step=global_step_eval)
             """validate"""
-            if global_step_eval % args.validation_per_steps == 0:
-                validation_loss_summary_eval = sess.run(validation_loss_summary)
-                tf.logging.info("Validation done.")
-                validation_writer.add_summary(validation_loss_summary_eval, global_step=global_step_eval)
+            # if global_step_eval % args.validation_per_steps == 0:
+            #     validation_loss_summary_eval = sess.run(validation_loss_summary)
+            #     tf.logging.info("Validation done.")
+            #     validation_writer.add_summary(validation_loss_summary_eval, global_step=global_step_eval)
             """save model"""
             if global_step_eval % args.save_per_steps == 0:
                 if not os.path.exists(args.save_path) or not os.path.isdir(args.save_path):

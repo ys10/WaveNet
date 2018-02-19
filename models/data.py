@@ -37,10 +37,11 @@ def crop_training_data(crop_length):
     return __crop
 
 
-def get_training_dataset(tfrecord_path, batch_size=16, crop_length=16000):
+def get_training_dataset(tfrecord_path, batch_size=16, crop_length=None):
     dataset = tf.data.TFRecordDataset(tfrecord_path)
     dataset = dataset.map(parse_training_example)
-    dataset = dataset.map(crop_training_data(crop_length))
+    if crop_length:
+        dataset = dataset.map(crop_training_data(crop_length))
     dataset = dataset.shuffle(10000)
     dataset = dataset.batch(batch_size)
     return dataset
