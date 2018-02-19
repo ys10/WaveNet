@@ -192,26 +192,3 @@ def mask_marks_2d(marks, mask, wave_length):
         masked_labels.append(labels[begin:end])
         pass
     return masked_labels
-
-
-def trans_labels2marks(labels, rate=16000):
-    """
-    Transfer GCI labels(sequence of 0/1) to GCI marks(time when GCI occurs).
-    :param labels: numpy array.
-    :param rate: sampling rate of raw wave.
-    :return: a list of marks.
-    """
-    marks = list(np.divide(np.float32(np.nonzero(labels))[0], rate))
-    return marks
-
-
-def save_marks(file_path, marks):
-    """
-    Write GCI marks(time when GCI occurs) into file system.
-    :param file_path: a path string
-    :param marks: a list of string, containing the GCI marks(time when GCI occurs).
-    :return:
-    """
-    lines = map(lambda m: str(m) + "\n", marks)
-    with open(file_path, mode='w') as f:
-        f.writelines(lines)
