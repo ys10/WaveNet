@@ -15,6 +15,7 @@ def get_args():
     parser.add_argument("--training_data_path", type=str, default="./data/training.tfrecords")
     parser.add_argument("--validation_data_path", type=str, default="./data/validation.tfrecords")
     parser.add_argument("--save_path", type=str, default="./save/")
+    parser.add_argument("--max_to_keep", type=int, default=500)
     parser.add_argument("--log_path", type=str, default="./log")
     parser.add_argument("--training_steps", type=int, default=250000)
     parser.add_argument("--validation_size", type=int, default=152)
@@ -61,7 +62,7 @@ def main():
         upd = opt.minimize(training_tensor_dic["loss"], global_step=global_step)
 
         # get saver.
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(max_to_keep=args.max_to_keep)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
