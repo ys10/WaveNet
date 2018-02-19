@@ -6,6 +6,7 @@ import os
 import tqdm
 
 from model import FocalLossModel, Model
+from dis_model import FocalLossDisModel, DisModel
 from data import get_training_dataset
 from model_loader import load_model, save_model
 
@@ -30,7 +31,7 @@ def get_args():
 
 def main():
     args = get_args()
-    net = Model()
+    net = DisModel()
     graph = tf.Graph()
     with graph.as_default():
         with tf.variable_scope("training_data"):
