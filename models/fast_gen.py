@@ -11,7 +11,7 @@ from data import get_testing_dataset
 from model_loader import load_model
 
 
-def trans_labels2marks(labels, rate=16000):
+def trans_labels2marks(labels, rate=20000):
     """
     Transfer GCI labels(sequence of 0/1) to GCI marks(time when GCI occurs).
     :param labels: numpy array.
@@ -37,9 +37,9 @@ def save_marks(file_path, marks):
 def get_args():
     parser = argparse.ArgumentParser(description="Generate by WaveNet!")
     parser.add_argument("--data_path", type=str, default="./data/testing.tfrecords")
-    parser.add_argument("--save_path", type=str, default="./save/")
+    parser.add_argument("--save_path", type=str, default="./save/model/")
     parser.add_argument("--batch_size", type=int, default=1)
-    parser.add_argument("--gen_samples", type=int, default=16000)
+    parser.add_argument("--gen_samples", type=int, default=20000)
     parser.add_argument("--gen_path", type=str, default="./fast_gen")
     parser.add_argument("--file_num", type=int, default=10)
     return parser.parse_args()
