@@ -46,8 +46,8 @@ def main():
             validation_iterator = validation_set.make_one_shot_iterator()
             validation_data = validation_iterator.get_next()
         # build net.
-        training_tensor_dic = net.build(data=training_data, reuse=tf.AUTO_REUSE)
-        validation_tensor_dic = net.build(data=validation_data, reuse=tf.AUTO_REUSE)
+        training_tensor_dic = net.build(data=training_data)
+        # validation_tensor_dic = net.build(data=validation_data, reuse=tf.AUTO_REUSE)
 
         # get summaries.
         audio_summary = tf.summary.merge([tf.summary.audio("wave", training_tensor_dic["wave"], args.sample_rate),
